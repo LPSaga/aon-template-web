@@ -1,9 +1,7 @@
 <template>
 	<Loading v-if="showLoading" :showLoading="showLoading" />
 	<div>
-		<!-- 页面内容 -->
-		<!-- <button @click="handleTweet"> . </button> -->
-		
+		<!-- 页面内容 -->		
 		<TweetView/>
 	</div>
 </template>
@@ -23,7 +21,6 @@ import 'vant/lib/index.css';
 import Loading from '../components/Loading.vue';
 import bus from '../eventBus.js';
 import { loadAppData,needLoadData,findKey,findParentKey, upload,update_run_count } from '../lib/loadApp'
-import { postTweetWithImage } from './TwitterAPI.ts';
 
 const router = useRouter()
 const imageStore = useImageStore();
@@ -41,12 +38,6 @@ let price = ref(10)
 
 
 const maxSize = 30 * 1024 * 1024;
-
-async function handleTweet() {
-	const status = "face swap message";
-	const imagePath = "https://img0.baidu.com/it/u=2200706064,2970457264&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500";
-	await postTweetWithImage(status, imagePath);
-}
 
 function goToComplete(url) {
 	const query = { url: url }
