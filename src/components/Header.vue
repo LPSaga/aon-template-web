@@ -36,23 +36,6 @@
 			</div>
 		</div>
 	</div>
-	
-	
-	<!-- <div class="custom-navbar" v-if="appData">
-		<img :src="appData && 
-		appData.params_value && 
-		appData.params_value.ui && 
-		appData.params_value.ui.body && 
-		appData.params_value.ui.body.header &&
-		appData.params_value.ui.body.header.logo" class="logo" @click="goIndex"></img>
-
-		<div class="title">{{appData && 
-		appData.params_value && 
-		appData.params_value.ui && 
-		appData.params_value.ui.body && 
-		appData.params_value.ui.body.header &&
-		appData.params_value.ui.body.header.title}}</div>
-	</div> -->
 </template>
 
 <script setup>
@@ -64,11 +47,10 @@ import {
 } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import { User } from 'aonweb'
-import {loadAppData} from '../lib/loadApp'
-
 
 import bus from '../eventBus.js';
 import { showToast, showLoadingToast, closeToast } from 'vant';
+import {loadAppData } from '../lib/loadApp'
 
 
 const router = useRouter()
@@ -76,10 +58,10 @@ const route = useRoute()
 const isUserPage = ref(false);
 
 const balanceValue = ref(0);
+const appData = ref({})
+const page_config = ref({})
 
 let page = ''
-const page_config = ref({})
-const appData = ref(null)
 
 
 const props = defineProps({
@@ -109,9 +91,9 @@ const balance = async () => {
 		let user = new User()
 		let result = await user.balance()
 		// console.log("Header balance ", result)
-		if (result && result._balances && result._balances.length) {
-			let temp = result._balances[0]
-			balanceValue.value = temp / 1000000000000000000n
+		if (result && result.code == 200 && result.data && result.data.length) {
+			let asset = result.data[0]
+			balanceValue.value = asset.balance / asset.unit
 		}
 		// console.log("Header balanceValue.value ", balanceValue.value)
 		localStorage.setItem("aon_balance",balanceValue.value)
@@ -139,8 +121,11 @@ const checkIfUserPage = () => {
 	isUserPage.value = route.path === '/user'
 };
 
-async function laod() {
-	let temp = await loadAppData(window.location.origin)
+async function load() {
+	let domain = window.location.origin
+	let href = window.location.href
+	console.log('window.location = ',window.location)
+	let temp = await loadAppData(domain,href)
 	let temp_ = JSON.parse(JSON.stringify({ ...temp }));
 	console.log("index load = ", temp_)
 	// temp = sortObjectByIndex(temp)
@@ -156,7 +141,7 @@ async function laod() {
 }
 
 onMounted(() => {
-	laod()
+	load()
 	checkIfUserPage();
 	let balance = localStorage.getItem("aon_balance")
 	balanceValue.value = balance
@@ -189,9 +174,12 @@ onMounted(() => {
 }
 
 .logo {
+	/* width: 7.47vw;
+	height: 7.47vw; */
 	width: 7.47vw;
 	height: 7.47vw;
 	margin-right: 2.13vw;
+	border-radius: 50%;
 }
 
 
@@ -246,5 +234,47 @@ onMounted(() => {
 	text-align: left;
 	font-style: normal;
 	text-transform: none;
+}
+
+@media screen and (min-width: 1024px) {
+	.custom-navbar {
+		min-height: 50px;
+		padding: 14px 24px;
+		margin-bottom: 24px;
+	}
+
+	.logo {
+		width: 28px;
+		height: 28px;
+		margin-right: 8px;
+	}
+
+
+	.title {
+		font-size: 20px;
+	}
+
+	.right {
+		min-width: 80px;
+		height: 28px;
+		padding: 0 4px;
+		border-radius: 80px;
+	}
+
+	.right .right_count .moneyIcon,
+	.right .userIcon {
+		height: 20px;
+		width: 20px;
+		margin-right: 2px;
+	}
+
+	.right .userIcon {
+		margin-right: 0;
+		margin-left: 2px;
+	}
+
+	.right .count {
+		font-size: 12px;
+	}
 }
 </style>

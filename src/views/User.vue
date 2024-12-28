@@ -11,7 +11,15 @@
 					</text>
 				</div>
 			</div>
-			<img @click="goToComplete" class="person-banner" src="../assets/images/personBanner.png" mode=""></img>
+			<!-- <div @click="goToLinkPage">关联账号</div> -->
+			<div class="group_2 flex-col">
+				<div class="image-wrapper_1 flex-row">
+					<img class="label_2" referrerpolicy="no-referrer" :src="item.lanhuimage0"
+						v-for="(item, index) in loopData0" :key="index" @click="setting_click(index)" />
+				</div>
+			</div>
+			<img v-if="task_group && task_group.length" @click="goToComplete" class="person-banner"
+				src="../assets/images/personBanner.png" mode=""></img>
 
 			<div class="myWork">
 				<text class="tit">My work</text>
@@ -32,15 +40,15 @@
 							</div>
 						</div>
 					</template>
-				</VirtualWaterfall> -->
+</VirtualWaterfall> -->
 
 			</div>
+		</div>
 
-			<div class="bottom_btn">
-				<button @click="goToCreate">
-					Go To Create
-				</button>
-			</div>
+		<div class="bottom_btn">
+			<button @click="goToCreate">
+				Go To Create
+			</button>
 		</div>
 	</div>
 </template>
@@ -51,24 +59,46 @@ import {
 	onMounted,
 	toRaw
 } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRouter ,useRoute} from 'vue-router'
 import { AI, User } from 'aonweb'
 import { showToast, showLoadingToast, closeToast } from 'vant';
 import bus from '../eventBus.js';
-import { VirtualWaterfall } from '@lhlyu/vue-virtual-waterfall'
-import useWaterfall from '../components/useWaterfall.ts'
-A
-const { backTop, waterfallOption, data, calcItemHeight, calcItemHeight_user_res } = useWaterfall()
+// import { VirtualWaterfall } from '@lhlyu/vue-virtual-waterfall'
+// import useWaterfall from '../components/useWaterfall.ts'
 
-import {loadAppData} from '../lib/loadApp'
+// const { backTop, waterfallOption, data, calcItemHeight, calcItemHeight_user_res } = useWaterfall()
+
+import { loadAppData, get_task_group } from '../lib/loadApp'
+
+
+const loopData0 = ref([
+	{
+		lanhuimage0:
+			'https://lanhu-oss.lanhuapp.com/MasterDDSSlicePNG2bca7c72324f15c434df75d8561b67b3.png',
+	},
+	{
+		lanhuimage0:
+			'https://lanhu-oss.lanhuapp.com/MasterDDSSlicePNG19c07e011b0d6494abe8a9b28f3d7c64.png',
+	},
+	{
+		lanhuimage0:
+			'https://lanhu-oss.lanhuapp.com/MasterDDSSlicePNGdef0a9ca06d4b9c88db80dd25953e38e.png',
+	},
+	{
+		lanhuimage0:
+			'https://lanhu-oss.lanhuapp.com/MasterDDSSlicePNG0dd2c1952f10abec8c126b36a382d715.png',
+	},
+])
 
 
 const router = useRouter()
+const route = useRoute()
 
 const account = ref('')
 
 const columns = ref([])
 const user_id = ref('')
+const task_group = ref([])
 
 // const server = ref('http://localhost:8088')
 const server = ref(null)
@@ -95,21 +125,50 @@ function goToComplete() {
 	})
 }
 
+function goToLinkPage() {
+	router.push({
+		path: '/link'
+	})
+}
+
+async function setting_click(index) {
+	if (index == 0) {
+		router.push({
+			path: '/asset'
+		})
+	}
+	if (index == 1) {
+		router.push({
+			path: '/ledger'
+		})
+	}
+	if (index == 2) {
+		router.push({
+			path: '/link'
+		})
+	}
+	if (index == 3) {
+		router.push({
+			path: '/setting'
+		})
+	}
+}
 
 async function mywork() {
 	try {
-		let rawAppData = await loadAppData(window.location.origin)
-		// if (!rawAppData) {
-		// 	showToast("app config error")
-		// 	return
-		// }
-
+		let domain = window.location.origin
+		let href = window.location.href
+		let rawAppData = await loadAppData(domain,href)
+		if (!rawAppData) {
+			showToast("app config error")
+			return
+		}
 		const aonet = new AI({
 			app_key: (rawAppData && rawAppData.id) || import.meta.env.VITE_APPID,
 		})
 		let user = new User()
 		let temp = await user.islogin()
-		console.log("temp = ",temp)
+		console.log("temp = ", temp)
 		if (!temp) {
 			return []
 		}
@@ -177,7 +236,7 @@ async function login() {
 				return
 			}
 		}
-		user_id.value = 'user-' + getSubstring(temp.id)
+		// user_id.value = 'user-' + getSubstring(temp.id)
 		account.value = temp.profiles && temp.profiles.account
 		bus.emit('get_balance', "login");
 		console.log(`demo index login end time = ${new Date().getTime() - time}`)
@@ -202,8 +261,34 @@ function getSubstring(str) {
 	}
 }
 
+const get_userInfo = async () => {
+	let user = new User()
+	let login_user = await user.userinfo()
+	user_id.value = 'user-' + getSubstring(login_user.id)
+	if (login_user && login_user.profiles && login_user.profiles.username && login_user.profiles.username.length) {
+		user_id.value = login_user.profiles.username
+	}
+}
+
+const user_get_task_group = async () => {
+	let domain = window.location.origin
+	let href = window.location.href
+	let rawAppData = await loadAppData(domain,href)
+	if (!rawAppData) {
+		return
+	}
+	get_task_group().then(res => {
+		console.log("user user_get_task_group res = ", res)
+		task_group.value = res
+	}).catch(error => {
+		console.log("user user_get_task_group error = ", error)
+	})
+}
+
 onMounted(() => {
 	login()
+	user_get_task_group()
+	get_userInfo()
 })
 
 </script>
@@ -263,7 +348,7 @@ onMounted(() => {
 .person-banner {
 	width: 100%;
 	height: 100%;
-	margin: 9.6vw 0 0;
+	margin: 6vw 0 0;
 }
 
 .myWork {
@@ -307,27 +392,27 @@ onMounted(() => {
 } */
 
 .columns {
-  column-count: 2;
-  column-gap: 6.4vw;
+	column-count: 2;
+	column-gap: 6.4vw;
 }
 
 .column-item {
-  width: 40vw;
-  break-inside: avoid;
-  overflow: hidden;
-  margin-bottom: 6.4vw;
+	width: 40vw;
+	break-inside: avoid;
+	overflow: hidden;
+	margin-bottom: 6.4vw;
 }
 
 .column-item img {
-  width: 100%;
-  display: block;
-  object-fit: cover;
+	width: 100%;
+	display: block;
+	object-fit: cover;
 }
 
 button {
 	width: 100%;
 	height: 9.07vw;
-	background: linear-gradient( 117deg, #43E8A0 0%, #8AF25F 100%);
+	background: linear-gradient(117deg, #43E8A0 0%, #8AF25F 100%);
 	box-shadow: 2.13vw 2.13vw 4.27vw .27vw rgba(0, 0, 0, 0.32);
 
 	border-radius: 1.07vw;
@@ -339,5 +424,120 @@ button {
 	text-align: center;
 	font-style: normal;
 	text-transform: none;
+}
+
+.group_2 {
+	background-image: linear-gradient(270deg,
+			rgba(62, 62, 62, 1) 0,
+			rgba(120, 120, 120, 1) 100%);
+	height: 14.94vw;
+	width: 100%;
+	margin: 6.4vw 0 0;
+	border-radius: 8px;
+
+	.image-wrapper_1 {
+		width: 67.2vw;
+		height: 6.4vw;
+		justify-content: space-between;
+		margin: 4.26vw 0 0 11.73vw;
+
+		.label_2 {
+			width: 6.4vw;
+			height: 6.4vw;
+			margin-right: 13.87vw;
+		}
+	}
+}
+
+@media screen and (min-width: 1024px) {
+	.ava-con {
+		margin-top: 32px;
+	}
+
+	.ava-con .ava {
+		height: 86px;
+		width: 86px;
+		margin-right: 16px;
+	}
+
+	.ava-con-r {
+		width: 225px;
+	}
+
+	.ava-con-r text {
+		font-size: 14px;
+		color: #fff;
+		line-height: 21px;
+	}
+
+	.ava-con-r .userId {
+		font-size: 16px;
+		line-height: 16px;
+		margin-bottom: 12px;
+		margin-top: 14px;
+		text-transform: uppercase;
+	}
+
+	.copy {
+		height: 12px;
+		width: 12px;
+	}
+
+	.person-banner {
+		width: 100%;
+		height: 100%;
+		margin: 22.5px 0 0;
+	}
+
+	.myWork {
+		width: 100%;
+		margin-top: 30px;
+		padding-bottom: 75px;
+	}
+
+	.myWork .tit {
+		font-size: 16px;
+		margin-bottom: 15.5px;
+	}
+
+	.columns {
+		min-height: 200px;
+		column-count: 2;
+		column-gap: 24px;
+	}
+
+	.column-item {
+		width: 150px;
+		margin-bottom: 24px;
+	}
+
+	button {
+		width: 100%;
+		height: 34px;
+		background: linear-gradient(117deg, #43E8A0 0%, #8AF25F 100%);
+		box-shadow: 8px 8px 16px 1px rgba(0, 0, 0, 0.32);
+
+		border-radius: 4px;
+		font-size: 16px;
+	}
+
+	.group_2 {
+		height: 56px;
+		margin: 24px 0 0;
+		border-radius: 8px;
+
+		.image-wrapper_1 {
+			width: 252px;
+			height: 24px;
+			justify-content: space-between;
+			margin: 16px 0 0 44px;
+
+			.label_2 {
+				width: 24px;
+				height: 24px;
+				margin-right: 52px;
+			}
+		}
+	}
 }
 </style>

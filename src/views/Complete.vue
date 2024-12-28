@@ -46,7 +46,7 @@ const goBack = () => {
 	font-family: Roboto-Bold;
 	font-weight: bold;
 	font-size: 3.2vw;
-	color: #000000;
+	color: #fff;
 	text-align: left;
 	font-style: normal;
 	text-decoration-line: underline;
@@ -65,7 +65,7 @@ const goBack = () => {
 	font-family: Roboto-Black;
 	font-weight: 900;
 	font-size: 6.4vw;
-	color: #000000;
+	color: #fff;
 	line-height: 9.07vw;
 	text-align: left;
 	font-style: normal;
@@ -78,7 +78,7 @@ const goBack = () => {
 	font-family: Roboto-Regular;
 	font-weight: 400;
 	font-size: 3.2vw;
-	color: #000000;
+	color: #fff;
 	line-height: 4.8vw;
 	text-align: left;
 	font-style: normal;
@@ -103,5 +103,48 @@ button {
 	margin: 0 auto;
 	margin-top: 14.4vw;
 	border: none;
+}
+
+@media screen and (min-width: 1024px) {
+	.complete {
+		padding-top: 16px;
+		padding-bottom: 50px;
+	}
+
+	.back {
+		font-size: 12px;
+	}
+
+	.completeIcon {
+		width: 252px;
+		height: 186px;
+		margin: 0 auto;
+		margin-top: 62px;
+		margin-bottom: 68px;
+	}
+
+	.p1 {
+		font-size: 24px;
+		line-height: 34px;
+		margin-bottom: 16px;
+	}
+
+	.p2 {
+		font-size: 12px;
+		line-height: 18px;
+	}
+
+	button {
+		width: 244px;
+		height: 34px;
+		line-height: 34px;
+		background: #2F54EB;
+		box-shadow: 4px 4px 8px 1px rgba(47, 84, 235, 0.32);
+		border-radius: 4px;
+
+		font-size: 14px;
+		margin-top: 54px;
+		border: none;
+	}
 }
 </style>

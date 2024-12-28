@@ -29,7 +29,7 @@ const height = ref('auto')
 
 onBeforeMount(() => {
     if (!props.noImage) {
-        height.value = '100%' 
+        height.value = '100%'
         new Promise(resolve => {
             const image = new Image()
             image.src = props.item.image

@@ -1,17 +1,112 @@
 <template>
-	<Loading v-if="showLoading" :showLoading="showLoading" />
+	<Loading v-if="showLoading" :showLoading="showLoading" :loadPercent="loadPercent" />
 	<div>
-		<!-- 页面内容 -->		
-		<TweetView/>
+		<!-- 页面内容 -->
+		<div :style="value.ui_type && value.ui_type.length && value.ui_type == 'footer' && value.show !== 'nodisplay' ? 'position: sticky; bottom: 0;' : ''"
+			v-for="(value, key) in page_config && page_config.properties" :key="key">
+			<div class="container">
+				<!-- {{ key }} -->
+				<div
+					v-if="value.ui_type && value.ui_type.length && value.ui_type == 'main' && value.show !== 'nodisplay'">
+					<div v-for="(form, key1) in value.properties" :key="key1">
+						<div v-if="form.ui_type && form.ui_type.length && form.show !== 'nodisplay'"
+							class="uni-form-item uni-column">
+							<!-- {{ key1 }}: {{ form }} -->
+							<div class="title">{{ form.title }}</div>
+							<div :class="`content ${form.ui_type == 'banner' && 'banner'}`"
+								v-if="form.ui_type == 'banner'">
+								<img :src="appData &&
+		appData.params_value &&
+		appData.params_value.ui &&
+		appData.params_value.ui[page_config.title] &&
+		appData.params_value.ui[page_config.title][key] &&
+		appData.params_value.ui[page_config.title][key][key1]"></img>
+								<!-- <p>AON 3D Clothing</p>
+								<p>Customize your clothing logo and generate a 3D avatar</p> -->
+							</div>
+							<div class="content" v-if="form.ui_type == 'input'">
+								<input v-model="appData.params_value.ui[page_config.title][key][key1]" name="input"
+									:placeholder="form.placeholder" />
+							</div>
+							<div class="content" v-if="form.ui_type == 'upload'">
+								<van-uploader v-model="appData.params_value.ui[page_config.title][key][key1]"
+									:max-size="maxSize" @oversize="onOversize" :after-read="afterRead" :deletable="true"
+									:before-delete="deleteImg(key, key1)" :max-count="1" :name="key1"
+									:accept="form.accept">
+
+									<div class="upload upload-before">
+										<img class="uploadIcon" src="../assets/icons/uploadImg.png" mode=""></img>
+										<text>{{ form.placeholder }}</text>
+									</div>
+
+								</van-uploader>
+							</div>
+							<div class="content" v-if="form.ui_type == 'radio'">
+								<van-radio-group v-model="appData.params_value.ui[page_config.title][key][key1]"
+									direction="row" class="custom-radio-group">
+									<van-radio v-for="(value, index) in form.enum" :key="index" :name="index"
+										checked-color="#2EE9D0" class="custom-radio">{{ value }}</van-radio>
+								</van-radio-group>
+							</div>
+							<div class="content" v-if="form.ui_type == 'select_nomal'">
+								<van-dropdown-menu>
+									<van-dropdown-item v-model="appData.params_value.ui[page_config.title][key][key1]"
+										:options="form.enum" />
+								</van-dropdown-menu>
+							</div>
+							<div class="content" v-if="form.ui_type == 'texteara'">
+								<van-field rows="3" autosize type="textarea"
+									v-model="appData.params_value.ui[page_config.title][key][key1]" label=""
+									:placeholder="form.placeholder" />
+							</div>
+							<div v-if="form.ui_type == 'select'">
+								<div class="templateCon" v-if="form.options && form.options.length > 0">
+									<div v-for="(item, index) in form.options"
+										:class="`template_item ${item.selected ? 'templateActive' : ''}`"
+										@click="selectTemplate(item)" :key="index">
+
+										<div class="imgCon">
+											<img :src="item.value.image" alt="" />
+										</div>
+										<div :class="`isActiveIcon ${item.selected ? 'active' : ''}`">
+											<img src="../assets/icons/selectIcon.png" alt="" v-if="item.selected">
+										</div>
+										<!-- <text :class="`text ${item.selected ? 'active' : ''}`">{{item.value.title}}</text> -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div
+				v-if="value.ui_type && value.ui_type.length && value.ui_type == 'footer' && value.show !== 'nodisplay'">
+				<div v-for="(footer, key) in value.properties" :key="key">
+					<div
+						v-if="footer.ui_type && footer.ui_type.length && footer.show !== 'nodisplay' && footer.ui_type == 'button'">
+						<div class="bottom_btn">
+							<div class="spendCount">
+								<img class="icon" src="../assets/icons/money.png" mode=""></img>
+								<text>-{{ price }}</text>
+							</div>
+							<button :disabled="false" :class="`submitBtn ${false && 'submitBtn_disabled'}`"
+								@click="formSubmit">
+								<text>{{ footer.title }}</text>
+							</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
 	</div>
 </template>
 
 <script setup>
-import TweetView from './Twitter.vue';
-
 import { ref, onMounted, toRaw } from 'vue';
 import { showToast, showLoadingToast, closeToast } from 'vant';
-import { useRouter } from 'vue-router'
+import { useRouter,useRoute } from 'vue-router'
 
 import { AI, AIOptions, User } from 'aonweb'
 import { getTemplate } from '../lib/getTemplate'
@@ -20,12 +115,15 @@ import { useImageStore } from '@/store/imageStore';
 import 'vant/lib/index.css';
 import Loading from '../components/Loading.vue';
 import bus from '../eventBus.js';
-import { loadAppData,needLoadData,findKey,findParentKey, upload,update_run_count } from '../lib/loadApp'
+import { loadAppData, needLoadData, findKey, findParentKey, upload, update_run_count,save_session } from '../lib/loadApp'
+import axios from 'axios';
 
 const router = useRouter()
+const route = useRoute()
 const imageStore = useImageStore();
 
 const showLoading = ref(false);
+const loadPercent = ref(0);
 const showError = ref(false);
 const prompt = ref('');
 const templateList = ref([]);
@@ -41,10 +139,15 @@ const maxSize = 30 * 1024 * 1024;
 
 function goToComplete(url) {
 	const query = { url: url }
-	router.push({
-		path: '/created',
-		query
-	})
+
+	loadPercent.value = 100
+	setTimeout(() => {
+		showLoading.value = false
+		router.push({
+			path: '/created',
+			query
+		})
+	}, 800);
 }
 
 const onOversize = (file) => {
@@ -52,7 +155,7 @@ const onOversize = (file) => {
 };
 
 async function afterRead(file, detail) {
-	console.log('afterRead = ',file.file,detail)
+	console.log('afterRead = ', file.file, detail)
 	const formData = new FormData();
 	formData.append('file', file.file);
 
@@ -84,35 +187,35 @@ function deleteImg() {
 	}
 }
 
-function find_prompt(paths,obj) {
-	console.log('find_prompt = ',paths,obj)
+function find_prompt(paths, obj) {
+	console.log('find_prompt = ', paths, obj)
 	let path = paths.shift()
-	console.log('find_prompt path = ',path)
+	console.log('find_prompt path = ', path)
 	let ref_data = obj[path]
-	console.log('find_prompt ref_data = ',ref_data)
-	if (path == paths[paths.length - 1] || (ref_data && !(ref_data instanceof Object))){
-		return  ref_data
+	console.log('find_prompt ref_data = ', ref_data)
+	if (path == paths[paths.length - 1] || (ref_data && !(ref_data instanceof Object))) {
+		return ref_data
 	}
-	return find_prompt(paths,ref_data)
+	return find_prompt(paths, ref_data)
 }
 
 function findWatermarkKey(obj) {
-    const keys= [];
+	const keys = [];
 
-    function recurse(currentObj, parentKey) {
-        if (typeof currentObj === 'object' && currentObj !== null) {
-            for (let key in currentObj) {
-                if (key === 'watermark' && currentObj[key]) {
-                    keys.push(parentKey);
-                } else if (typeof currentObj[key] === 'object') {
-                    recurse(currentObj[key], key);
-                }
-            }
-        }
-    }
+	function recurse(currentObj, parentKey) {
+		if (typeof currentObj === 'object' && currentObj !== null) {
+			for (let key in currentObj) {
+				if (key === 'watermark' && currentObj[key]) {
+					keys.push(parentKey);
+				} else if (typeof currentObj[key] === 'object') {
+					recurse(currentObj[key], key);
+				}
+			}
+		}
+	}
 
-    recurse(obj, null);
-    return keys;
+	recurse(obj, null);
+	return keys;
 }
 
 const formSubmit = async () => {
@@ -123,11 +226,12 @@ const formSubmit = async () => {
 		return
 	}
 	if (!imageStore.uploadedImageUrl) {
-		showError.value = true
+		showToast("Please upload a image")
+		// showError.value = true
 
-		setTimeout(() => {
-			showError.value = false
-		}, 3000)
+		// setTimeout(() => {
+		// 	showError.value = false
+		// }, 3000)
 		return
 	}
 
@@ -155,12 +259,12 @@ const formSubmit = async () => {
 		// }
 
 		let find_data = main
-		console.log("find_data = ",find_data)
+		console.log("find_data = ", find_data)
 		let keys = Object.keys(find_data)
 		for (let i = 0; i < keys.length; i++) {
 			let key = keys[i]
-			let temp =  findKey(rawAppData.template_params,key)
-			console.log("formSubmit Object findKey = ",key,temp)
+			let temp = findKey(rawAppData.template_params, key)
+			console.log("formSubmit Object findKey = ", key, temp)
 			if (temp.ui_type == 'upload' && temp.show != 'nodisplay') {
 				if (!find_data[key] || !(find_data[key] && find_data[key].length)) {
 					if (temp.toast && temp.toast.length) {
@@ -182,22 +286,22 @@ const formSubmit = async () => {
 			app_key: rawAppData.id || import.meta.env.VITE_APPID,
 		})
 		let ui = rawAppData.params_value.ui
-		console.log("ui = ",ui)
-		
+		console.log("ui = ", ui)
+
 		let current_ai = rawAppData.params_value.ai
 		let models = Object.keys(current_ai)
-		console.log("models = ",models)
+		console.log("models = ", models)
 		let data = {}
 		for (let i = 0; i < models.length; i++) {
 			let model = models[i]
 			data[model] = current_ai[model]
 			let keys = Object.keys(data[model])
-			console.log("keys = ",keys)
-			for (let m = 0; m < keys.length; m++){
+			console.log("keys = ", keys)
+			for (let m = 0; m < keys.length; m++) {
 				let key = keys[m]
-				console.log("key = ",key)
+				console.log("key = ", key)
 				let temp = data[model][key]
-				console.log("temp = ",temp)
+				console.log("temp = ", temp)
 				if (temp && temp instanceof Object) {
 					let key_data = null
 					let ref_raw = temp['$ref']
@@ -206,16 +310,16 @@ const formSubmit = async () => {
 							key_data = eval(ref_raw)
 						} else {
 							let ref = ref_raw.split('/')
-							console.log("ref = ",ref)
-							let ref_data = find_prompt(ref,rawAppData.params_value)
-							console.log("ref_data = ",ref_data)
+							console.log("ref = ", ref)
+							let ref_data = find_prompt(ref, rawAppData.params_value)
+							console.log("ref_data = ", ref_data)
 							key_data = ref_data
 							if (ref_data && ref_data.indexOf('$') > -1) {
 								key_data = eval(ref_data)
 							}
-						} 
+						}
 					}
-					console.log("key_data = ",key_data)
+					console.log("key_data = ", key_data)
 					data[model][key] = key_data
 				}
 			}
@@ -228,14 +332,20 @@ const formSubmit = async () => {
 		update_run_count()
 		let response = await aonet.prediction(models, data)
 		console.log("test", response)
-		showLoading.value = false
 		let responseData = null
 		if (response && response.code == 200 && response.data) {
 			responseData = response.data[0]
 		}
 		if (responseData && responseData.result) {
 			let url = responseData.result && responseData.result.length && responseData.result[0]
-			console.log('responseData.result = ',responseData.result)
+			if (!(url && url.length) && Object.prototype.toString.call(responseData.result) === '[object Object]') {
+				console.log('这个变量是一个对象');
+				if (responseData.result.image) {
+					url = responseData.result.image
+				}
+			}
+			console.log('responseData.result = ', responseData.result)
+			sendTweet()
 			goToComplete(url)
 		} else {
 			showLoading.value = false
@@ -257,6 +367,28 @@ const formSubmit = async () => {
 
 }
 
+async function sendTweet() {
+	console.log('sendTweet');
+	const bearerToken = 'AAAAAAAAAAAAAAAAAAAAAGtMxgEAAAAAYzWFrhAznfvBjHjHdyaV%2B60aNMw%3DliBPtuHTyOHLr7ztekswr5F7GlVE6Hxp62oVU0ckB0nCrcERt6';
+	const headers = {
+		Authorization: `Bearer ${bearerToken}`,
+		'Content-Type': 'application/json'
+	};
+	const formData = new FormData();
+	formData.append('text', 'test twitter info.');
+	// if (this.selectedFile) {
+	// 	formData.append('media', this.selectedFile);
+	// }
+	try {
+		const response = await axios.post('https://api.twitter.com/2/tweets', formData, {
+			headers: headers
+		});
+		console.log(response.data);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 function selectTemplate(item) {
 	console.log("selectTemplate = ", item)
 	let rawAppData = toRaw(appData.value)
@@ -265,22 +397,22 @@ function selectTemplate(item) {
 	}
 	let keys = needLoadData(rawAppData)
 	let key = keys && keys.length && keys[0]
-	
 
-	let key_data = findKey(rawAppData.template_params,key)
-	console.log("selectTemplate options = ",key_data)
+
+	let key_data = findKey(rawAppData.template_params, key)
+	console.log("selectTemplate options = ", key_data)
 	for (let i = 0; i < key_data.options.length; i++) {
 		let loaction = key_data.options[i]
 		loaction.selected = false
 	}
 	item.selected = true
 
-	let data = findParentKey(rawAppData.params_value,key)
-	console.log("selectTemplate findParentKey = ",data)
+	let data = findParentKey(rawAppData.params_value, key)
+	console.log("selectTemplate findParentKey = ", data)
 
 	let temp_selected_item = toRaw(item)
 	let selected_item = JSON.parse(JSON.stringify(temp_selected_item))
-	console.log("selectTemplate selected_item = ",selected_item)
+	console.log("selectTemplate selected_item = ", selected_item)
 	data[key] = selected_item
 
 	if (!selected_item.value) {
@@ -288,18 +420,18 @@ function selectTemplate(item) {
 		return
 	}
 	let ui = rawAppData.params_value.ui
-	console.log("ui = ",ui)
+	console.log("ui = ", ui)
 	let material_value = selected_item.value
 	let material_value_keys = Object.keys(material_value)
 	for (let i = 0; i < material_value_keys.length; i++) {
 		let key = material_value_keys[i]
-		console.log('selected_item[key] = ',key,typeof material_value[key],material_value[key])
+		console.log('selected_item[key] = ', key, typeof material_value[key], material_value[key])
 		if (material_value[key] && typeof material_value[key] == 'string' && material_value[key].indexOf("${") > -1) {
 			const regex = /\${(\w+)}/;
 			const match = material_value[key].match(regex);
 			material_value[key] = eval(material_value[key])
 		}
-		console.log('selected_item[key] 1111 = ',material_value[key])
+		console.log('selected_item[key] 1111 = ', material_value[key])
 	}
 }
 
@@ -339,28 +471,30 @@ async function login() {
 }
 
 function recursiveSortProperties(obj) {
-  // Check if the current object has properties
-  if (obj && typeof obj === 'object' && obj.hasOwnProperty('properties')) {
-    // Step 1: Convert the properties object to an array of key-value pairs
-    const entries = Object.entries(obj.properties);
+	// Check if the current object has properties
+	if (obj && typeof obj === 'object' && obj.hasOwnProperty('properties')) {
+		// Step 1: Convert the properties object to an array of key-value pairs
+		const entries = Object.entries(obj.properties);
 
-    // Step 2: Sort the array based on the 'index' of each property
-    const sortedEntries = entries.sort(([, a], [, b]) => (a['index'] || 0) - (b['index'] || 0));
+		// Step 2: Sort the array based on the 'index' of each property
+		const sortedEntries = entries.sort(([, a], [, b]) => (a['index'] || 0) - (b['index'] || 0));
 
-    // Step 3: Convert the sorted array back into an object
-    obj.properties = Object.fromEntries(sortedEntries);
-  }
+		// Step 3: Convert the sorted array back into an object
+		obj.properties = Object.fromEntries(sortedEntries);
+	}
 
-  // Recursively call the function on all nested objects
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key) && typeof obj[key] === 'object') {
-      recursiveSortProperties(obj[key]);
-    }
-  }
+	// Recursively call the function on all nested objects
+	for (const key in obj) {
+		if (obj.hasOwnProperty(key) && typeof obj[key] === 'object') {
+			recursiveSortProperties(obj[key]);
+		}
+	}
 }
 
 async function load() {
-	let temp = await loadAppData(window.location.origin)
+	let domain = window.location.origin
+	let href = window.location.href
+	let temp = await loadAppData(domain,href)
 	recursiveSortProperties(temp.template_params.ui)
 	let temp_ = JSON.parse(JSON.stringify({ ...temp }));
 	console.log("index load = ", temp_)
@@ -379,9 +513,32 @@ async function load() {
 }
 
 
-onMounted(() => {
+onMounted(async () => {
+	// let sb_api_auth_token_backup = localStorage.getItem('sb_api_auth_token_backup')
+	// let sb_api_auth_token = localStorage.getItem('sb-api-auth-token')
+
+	// if (sb_api_auth_token_backup && !sb_api_auth_token) {
+	// 	let session = JSON.parse(sb_api_auth_token_backup)
+	// 	await save_session(session)
+	// }
+	// if (sb_api_auth_token_backup) {
+	// 	localStorage.removeItem('sb_api_auth_token_backup')
+	// }
 	load()
 	login()
+	let error_code = route.query.error_code;
+	let error_description = route.query.error_description;
+	if (error_description && error_description.length && error_description.indexOf('+') > -1) {
+		error_description = decodeURIComponent(error_description && error_description.replace(/\+/g, ' '));
+	} 
+  	else if (error_code == 421) {
+    	error_description = 'Current user has already link Telegram'
+	} else if (error_code == 423) {
+    	error_description = 'Telegram account already been used'
+	}
+	if (error_description && error_description.length) {
+		showToast(error_description)
+	}
 })
 
 </script>
@@ -682,5 +839,281 @@ onMounted(() => {
 .template_item .active {
 	background: #2EE9D0;
 	color: #1C1C1C;
+}
+
+@media screen and (min-width: 1024px) {
+	.custom-radio-group {
+		display: flex;
+		justify-content: flex-start;
+	}
+
+	.custom-radio {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		margin-right: 60px;
+		flex: none;
+	}
+
+	.custom-radio .van-radio__icon--checked .van-icon {
+		background-color: #000;
+		border-color: #000;
+	}
+
+	.custom-radio .van-radio__label {
+		text-align: left;
+		color: #fff !important;
+	}
+
+	.uni-form-item .title {
+		font-family: Roboto-Bold;
+		font-weight: bold;
+		font-size: 16px;
+		color: #fff;
+		text-align: left;
+		margin-bottom: 8px;
+	}
+
+	.uni-form-item {
+		margin-bottom: 32px;
+	}
+
+	.uni-form-item .content {
+		width: 100%;
+		min-height: 56px;
+		background: #3B3939;
+		border-radius: 4px;
+		display: flex;
+		align-items: center;
+		padding: 0 12px;
+		box-sizing: border-box;
+	}
+
+	.uni-form-item .banner {
+		width: 100%;
+		height: 104px;
+		margin-top: 8px;
+		position: relative;
+		padding: 16px;
+		background: transparent;
+	}
+
+	.uni-form-item .banner img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.uni-form-item .banner p {
+		position: relative;
+		z-index: 10;
+		font-family: Roboto-Black;
+		font-weight: 900;
+		font-size: 24px;
+		color: #FFFFFF;
+		text-align: left;
+	}
+
+	.uni-form-item .banner p:last-child {
+		width: 184px;
+		font-family: Roboto-Regular;
+		font-weight: 400;
+		font-size: 9px;
+		color: #FFFFFF;
+		line-height: 16px;
+		text-align: left;
+	}
+
+	.error-text {
+		width: 325px;
+		position: fixed;
+		bottom: 81px;
+	}
+
+	.error-text .content {
+		background-color: #F3A32B;
+		font-size: 12px;
+		color: #fff;
+	}
+
+	.uploadCon {
+		min-height: 145px;
+		display: flex;
+		background: #554F4F;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.uploadCon .upload {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.upload-before {
+		width: 100%;
+		display: flex;
+		align-items: center;
+	}
+
+	.upload-before text {
+		color: #fff;
+		font-size: 14px;
+		font-family: Roboto-Regular;
+	}
+
+	.upload-done {
+		justify-content: space-between;
+		position: relative;
+	}
+
+	.uploadIcon {
+		width: 32px;
+		height: 32px;
+		margin-right: 9px;
+	}
+
+	.upload-res {
+		width: 100%;
+		height: 112px;
+		object-fit: cover;
+	}
+
+	.deleteIcon {
+		height: 19px;
+		width: 19px;
+		position: absolute;
+		right: 8px;
+		top: 8px;
+	}
+
+	.bottom_btn .spendCount {
+		width: 72px;
+		height: 34px;
+		background: #3B3939;
+		border-radius: 4px;
+		display: flex;
+		z-index: 9;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.bottom_btn .spendCount .icon {
+		height: 24px;
+		width: 24px;
+		margin-right: 8px;
+	}
+
+	.bottom_btn .submitBtn {
+		width: 240px;
+		height: 34px;
+		background: linear-gradient(117deg, #43E8A0 0%, #36CFC9 100%);
+		box-shadow: 8px 8px 16px 2px rgba(0, 0, 0, 0.32);
+		border-radius: 4px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.bottom_btn .submitBtn text {
+		font-family: Roboto-Black;
+		font-size: 16px;
+		font-weight: bold;
+		color: #1C1C20;
+	}
+
+	.bottom_btn .submitBtn_disabled {
+		background: #434343;
+	}
+
+	.templateCon {
+		height: auto;
+		background: transparent;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.template_item {
+		height: auto;
+		width: 160px;
+		border-radius: 4px;
+		position: relative;
+		overflow: hidden;
+		box-sizing: border-box;
+		z-index: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		break-inside: avoid;
+		overflow: hidden;
+		margin-bottom: 24px;
+	}
+
+	.template_item .imgCon {
+		width: 100%;
+		height: 100%;
+	}
+
+	.template_item .imgCon img {
+		display: inline-block;
+		height: 100%;
+		min-height: 112px;
+		width: 100%;
+		object-fit: cover;
+	}
+
+	.template_item .text {
+		width: 100%;
+		height: 34px;
+		line-height: 34px;
+		background: #3B3939;
+		justify-content: flex-start;
+		align-items: center;
+		font-size: 12px;
+		font-family: Roboto-Bold;
+		color: #FFFFFF;
+		padding: 0 8px;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.templateActive {
+		border: 1px solid #2EE9D0;
+		color: #1C1C1C;
+	}
+
+	.isActiveIcon {
+		position: absolute;
+		bottom: 6px;
+		right: 6px;
+		width: 12px;
+		height: 12px;
+		background: #FFFFFF;
+		border: 1px solid #000000;
+		border-radius: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.isActiveIcon img {
+		height: 8px;
+		width: 8px;
+	}
+
+	.template_item .active {
+		background: #2EE9D0;
+		color: #1C1C1C;
+	}
 }
 </style>

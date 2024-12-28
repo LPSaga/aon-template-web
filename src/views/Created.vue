@@ -1,10 +1,10 @@
 <template>
 	<div class="">
 		<div class="container created">
-			<div class="resCon" ref="containerRef">
+			<div class="resCon">
 				<img class="res_img" :src="imageUrl" mode=""></img>
-				<!-- <canvas ref="canvasRef"></canvas> -->
 			</div>
+
 
 			<div class="handles">
 				<div class="download">
@@ -14,12 +14,11 @@
 					<img src="../assets/icons/share.png" mode=""></img>
 				</div> -->
 			</div>
+		</div>
 
-
-			<div class="bottom_btn">
-				<button class="personalCenter" @click="goUser">Personal Center</button>
-				<button class="createMore" @click="goToCreate">Generate More</button>
-			</div>
+		<div class="bottom_btn">
+			<button class="personalCenter" @click="goUser">Personal Center</button>
+			<button class="createMore" @click="goToCreate">Generate More</button>
 		</div>
 	</div>
 </template>
@@ -35,52 +34,30 @@ const router = useRouter()
 const route = useRoute()
 
 const imageUrl = ref('')
-const canvasWidth = ref(100)
-const canvasHeight = ref(200)
-const canvasRef = ref(null);
-const containerRef = ref(null);
-
 
 function goToCreate() {
 	router.push({
 		path: '/'
 	})
 }
-
 const goUser = () => {
 	router.push('/user')
 };
 
-function getFileExtension(url) {
-	// 创建一个 URL 对象
-	const urlObj = new URL(url);
-	// 获取路径部分
-	const pathname = urlObj.pathname;
-	// 提取文件名
-	const filename = pathname.split('/').pop();
-	// 提取文件后缀
-	const extension = filename.split('.').pop();
 
-	// 如果没有后缀名，返回空字符串
-	if (filename === extension) {
-		return '';
-	}
 
-	return extension;
-}
 
 async function downloadImage() {
+	if (!imageUrl.value) return;
 	try {
 		// Fetch the image as a blob
 		const response = await fetch(imageUrl.value);
 		const blob = await response.blob();
 
-
 		// Create a link element and set the URL using the blob
 		const link = document.createElement('a');
 		link.href = URL.createObjectURL(blob);
-		const extension = getFileExtension(imageUrl.value);
-		link.download = 'downloaded-file.' + extension; // 设置下载的文件名
+		link.download = 'downloaded-image.jpg'; // 设置下载的文件名
 
 		// Append the link to the body and click it to trigger the download
 		document.body.appendChild(link);
@@ -111,6 +88,7 @@ onMounted(() => {
 
 .resCon {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	height: 100%;
@@ -119,8 +97,33 @@ onMounted(() => {
 	background: #3D3D3D;
 }
 
-.res_img {
+.resCon div {
+	height: 100%;
 	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.resCon p {
+	width: 100%;
+	padding: 6.4vw 6.93vw;
+	font-family: Roboto-Bold;
+	font-weight: 700;
+	font-size: 5.33vw;
+	color: #FFFFFF;
+	line-height: 6.13vw;
+	text-align: left;
+	font-style: normal;
+	text-transform: none;
+	background-color: #141414;
+	word-wrap: break-word;
+}
+
+.res_img {
+	width: auto;
+	max-width: 100%;
 	height: auto;
 	max-height: 153.6vw;
 }
@@ -170,7 +173,7 @@ button {
 
 	width: 42.67vw;
 	height: 8.53vw;
-	
+
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -187,5 +190,59 @@ button {
 	background: linear-gradient(117deg, #36CFC9 0%, #EF81FF 100%);
 	box-shadow: 2.13vw 2.13vw 4.27vw .27vw rgba(0, 0, 0, 0.32);
 	border-radius: 1.07vw;
+}
+
+@media screen and (min-width: 1024px) {
+	.created {
+		padding-top: 32px;
+		position: relative;
+	}
+
+	.resCon {
+		min-height: 454px;
+	}
+
+	.res_img {
+		max-height: 576px;
+	}
+
+	.handles {
+		padding-bottom: 75px;
+	}
+
+	.download {
+		width: 32px;
+		height: 32px;
+		border: 1px solid #FFFFFF;
+		margin-top: 24px;
+		margin-left: 20px;
+	}
+
+	.download img {
+		height: 20px;
+		width: 20px;
+	}
+
+	.bottom_btn {
+		padding: 10px 17px;
+	}
+
+	button {
+		font-size: 16px;
+		width: 160px;
+		height: 32px;
+	}
+
+	.createMore {
+		background: linear-gradient(117deg, #43E8A0 0%, #8AF25F 100%);
+		box-shadow: 8px 8px 16px 1px rgba(0, 0, 0, 0.32);
+		border-radius: 4px;
+	}
+
+	.personalCenter {
+		background: linear-gradient(117deg, #36CFC9 0%, #EF81FF 100%);
+		box-shadow: 8px 8px 16px 1px rgba(0, 0, 0, 0.32);
+		border-radius: 4px;
+	}
 }
 </style>
