@@ -1,0 +1,182 @@
+[
+    {
+        "id": "1",
+        "title":"Consensus",
+        "image": "template1.jpg",
+        "prompt": "large conference hall, podium with speaker, blockchain logos, tech booths, audience with notebooks, high-energy atmosphere"
+    },
+    {
+        "id": "2",
+        "title":"ETHDenver",
+        "image": "template2.jpg",
+        "prompt": "tech conference venue, Ethereum logos, coding workshops, networking areas, blockchain enthusiasts, creative vibe"
+    },
+    {
+        "id": "3",
+        "title":"Devcon",
+        "image": "template3.jpg",
+        "prompt": "international conference center, keynote speakers, blockchain presentations, developer discussions, Ethereum branding, collaborative environment"
+    },
+    {
+        "id": "4",
+        "title":"Y Combinator",
+        "image": "template4.jpg",
+        "prompt": "modern office space, startup founders, mentorship sessions, whiteboards with ideas, funding pitches, innovation-driven atmosphere"
+    },
+    {
+        "id": "5",
+        "title":"Techstars",
+        "image": "template5.jpg",
+        "prompt": "dynamic workspace, startup teams collaborating, mentor interactions, pitch decks, brainstorming sessions, entrepreneurial spirit"
+    },
+    {
+        "id": "6",
+        "title":"500 Startups",
+        "image": "template6.jpg",
+        "prompt": "vibrant office, diverse startup teams, accelerator programs, investor meetings, creative discussions, high-energy environment"
+    },
+    {
+        "id": "7",
+        "title":"WeWork",
+        "image": "template7.jpg",
+        "prompt": "stylish co-working space, shared desks, communal lounge, coffee bar, collaborative meetings, modern decor"
+    },
+    {
+        "id": "8",
+        "title":"Spaces",
+        "image": "template8.jpg",
+        "prompt": "contemporary office design, open work areas, comfortable seating, networking events, shared amenities, inspiring workspace"
+    },
+    {
+        "id": "9",
+        "title":"Impact Hub",
+        "image": "template9.jpg",
+        "prompt": "eco-friendly co-working space, social entrepreneurs, collaborative projects, networking lounge, sustainable design, innovative community"
+    },
+    {
+        "id": "10",
+        "title":"Google HQ",
+        "image": "template10.jpg",
+        "prompt": "futuristic campus, Google logo, modern workspaces, employee lounges, advanced tech labs, innovative culture"
+    },
+    {
+        "id": "11",
+        "title":"Facebook HQ",
+        "image": "template11.jpg",
+        "prompt": "high-tech office complex, Facebook logo, collaborative work areas, social spaces, cutting-edge technology, creative environment"
+    },
+    {
+        "id": "12",
+        "title":"Amazon HQ",
+        "image": "template12.jpg",
+        "prompt": "sprawling tech campus, Amazon logo, bustling offices, research labs, employee amenities, innovation hub"
+    },
+    {
+        "id": "13",
+        "title":"MIT",
+        "image": "template13.jpg",
+        "prompt": "iconic campus buildings, research labs, students and professors, books and laptops, academic discussions, innovation-focused atmosphere"
+    },
+    {
+        "id": "14",
+        "title":"Stanford University",
+        "image": "template14.jpg",
+        "prompt": "picturesque campus, advanced research facilities, collaborative student projects, academic presentations, high-tech environment"
+    },
+    {
+        "id": "15",
+        "title":"Berkeley",
+        "image": "template15.jpg",
+        "prompt": "historic campus, cutting-edge research labs, scholarly discussions, diverse student body, innovative research environment"
+    },
+    {
+        "id": "16",
+        "title":"Silicon Valley",
+        "image": "template16.jpg",
+        "prompt": "high-tech office buildings, innovation labs, tech startups, collaborative workspaces, futuristic technology, entrepreneurial spirit"
+    },
+    {
+        "id": "17",
+        "title":"Shenzhen High-Tech Industrial Park",
+        "image": "template17.jpg",
+        "prompt": "modern tech park, advanced research facilities, startup incubators, tech exhibitions, innovative products, rapid development"
+    },
+    {
+        "id": "18",
+        "title":"Cambridge Science Park",
+        "image": "template18.jpg",
+        "prompt": "science-focused tech park, research institutions, collaborative projects, high-tech labs, academic-industry partnerships, innovative environment"
+    },
+    {
+        "id": "19",
+        "title":"Binance Office",
+        "image": "template19.jpg",
+        "prompt": "sleek modern office, Binance logo, trading screens, team discussions, crypto market data, high-security environment"
+    },
+    {
+        "id": "20",
+        "title":"Coinbase Office",
+        "image": "template20.jpg",
+        "prompt": "contemporary workspace, Coinbase logo, financial data screens, collaborative meetings, advanced tech equipment, professional atmosphere"
+    },
+    {
+        "id": "21",
+        "title":"Kraken Office",
+        "image": "template21.jpg",
+        "prompt": "high-tech office space, Kraken logo, trading terminals, team brainstorming sessions, crypto charts, secure environment"
+    },
+    {
+        "id": "22",
+        "title":"ETHGlobal Hackathons",
+        "image": "template22.jpg",
+        "prompt": "energetic hackathon venue, coding teams, laptops with code, Ethereum branding, coffee stations, creative problem-solving"
+    },
+    {
+        "id": "23",
+        "title":"HackMIT",
+        "image": "template23.jpg",
+        "prompt": "university hackathon setting, student coders, tech workshops, collaborative coding, innovative projects, academic energy"
+    },
+    {
+        "id": "24",
+        "title":"TechCrunch Disrupt Hackathon",
+        "image": "template24.jpg",
+        "prompt": "large event space, diverse coding teams, tech presentations, intense coding sessions, networking areas, innovative atmosphere"
+    },
+    {
+        "id": "25",
+        "title":"Meetup Events",
+        "image": "template25.jpg",
+        "prompt": "informal community gathering, blockchain enthusiasts, discussion groups, whiteboards with ideas, friendly networking, collaborative spirit"
+    },
+    {
+        "id": "26",
+        "title":"DAO Community Gatherings",
+        "image": "template26.jpg",
+        "prompt": "decentralized organization meeting, crypto discussions, project presentations, community voting, collaborative planning, innovative environment"
+    },
+    {
+        "id": "27",
+        "title":"Local Blockchain Meetups",
+        "image": "template27.jpg",
+        "prompt": "local event space, blockchain discussions, small groups, tech demos, community engagement, grassroots innovation"
+    },
+    {
+        "id": "28",
+        "title":"New York Times Square",
+        "image": "template28.jpg",
+        "prompt": "bustling city square, iconic billboards, tourists taking selfies, urban background, night lights, vibrant atmosphere"
+    },
+    {
+        "id": "29",
+        "title":"San Francisco Golden Gate Bridge",
+        "image": "template29.jpg",
+        "prompt": "landmark bridge, scenic view, tourists with cameras, city background, iconic structure, picturesque setting"
+    },
+    {
+        "id": "30",
+        "title":"London Tower Bridge",
+        "image": "template30.jpg",
+        "prompt": "historic bridge, Thames River, tourists photographing, cityscape, iconic landmark, cultural atmosphere"
+    }
+]

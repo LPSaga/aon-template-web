@@ -72,8 +72,8 @@
 
 		<div class="modal-con flex-col justify-center" v-if="false">
 			<div class="content">
-				<img class="close-icon" src="../assets/icons/close.png" alt="">
-				<img class="tips-icon" src="../assets/icons/tipsIcon.png" alt="">
+				<!-- <img class="close-icon" src="../assets/icons/close.png" alt=""> -->
+				<!-- <img class="tips-icon" src="../assets/icons/tipsIcon.png" alt=""> -->
 				<p class="desc">
 					After completing the task requirements, please return to the task center to verify the task. If the
 					verification is successful, you will receive a reward.
@@ -90,8 +90,8 @@
 
 		<div class="modal-con flex-col justify-center" v-if="false">
 			<div class="content">
-				<img class="close-icon" src="../assets/icons/close.png" alt="">
-				<img class="tips-icon" src="../assets/icons/tipsIcon2.png" alt="">
+				<!-- <img class="close-icon" src="../assets/icons/close.png" alt="">
+				<img class="tips-icon" src="../assets/icons/tipsIcon2.png" alt=""> -->
 				<p class="desc">
 					Your task has been completed and the reward has been issued to your account.
 				</p>
@@ -102,8 +102,8 @@
 
 		<div class="modal-con flex-col justify-center" v-if="false">
 			<div class="content">
-				<img class="close-icon" src="../assets/icons/close.png" alt="">
-				<img class="tips-icon" src="../assets/icons/tipsIcon3.png" alt="">
+				<!-- <img class="close-icon" src="../assets/icons/close.png" alt="">
+				<img class="tips-icon" src="../assets/icons/tipsIcon3.png" alt=""> -->
 				<p class="desc">
 					Your task verification failed. Please check if you have completed the required actions for the task.
 				</p>
